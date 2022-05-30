@@ -50,7 +50,7 @@ def end(update, context):
 if __name__ == '__main__':
     bot = telegram.Bot(token)
     print(bot.get_me())
-    database.insertData(["DROP TABLE BANANA;TRUNCATE TABLE SI;SELECT * FROM DUAL"])
+    database.insertData(["stegon","94","2","sashimi"])
     updater = Updater(token)
     updater.dispatcher.add_handler(CommandHandler("start", start))
     updater.dispatcher.add_handler(CommandHandler("end", end))
