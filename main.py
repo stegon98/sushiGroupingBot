@@ -1,18 +1,29 @@
 import psycopg2
 import os
+import json
 from bestemmie import Bestemmie
 import telegram
 from telegram.ext import Updater, CommandHandler
 
-token=os.environ['TOKEN_ID']
+token = os.environ['TOKEN_ID']
 chat_ids = set()
 
+class Order:
+  def __init__(mysillyobject, username, parameters):
+    mysillyobject.username = username
+    mysillyobject.parameters = parameters
 
-def extract_number(text):
+  def insertOrder(order):
+    print("Hello my name is " + order.username +" "+order.parameters[1])
+
+def extract_number(text, username):
     paramList=[]
     for i in range(len(text.split())):
-        param=text.split()[i].strip()
-        print(param)
+        paramList.append(text.split()[i].strip())
+
+    order=Order(username, paramList)
+
+    order.insertOrder()
 
 def logUsingPorchiddei(error):
     porcone = Bestemmie()
@@ -20,13 +31,15 @@ def logUsingPorchiddei(error):
 
 def start(update, context):
     chat_id = update.effective_chat.id
-    update.message.reply_text("start")
+    bestemmione = Bestemmie()
+    update.message.reply_text("Sono su " + bestemmione.random())
     print("start called from chat with id = {}".format(chat_id))
 
 def add(update, context):
     chat_id = update.effective_chat.id
-    update.message.reply_text("add")
-    extract_number(update.message.text)
+    user = update.message.from_user
+    update.message.reply_text("Sto aggiungendo tutto")
+    extract_number(update.message.text, user["username"])
     
 def end(update, context):
     chat_id = update.effective_chat.id
