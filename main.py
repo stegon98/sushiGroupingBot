@@ -7,6 +7,17 @@ from telegram.ext import Updater, CommandHandler
 token=os.environ['TOKEN_ID']
 chat_ids = set()
 
+
+def extract_number(text):
+    paramList=[]
+    for i in range(len(text.split())):
+        param=text.split()[i].strip()
+        print(param)
+
+def logUsingPorchiddei(error):
+    porcone = Bestemmie()
+    print(error+" "+porcone.random())
+
 def start(update, context):
     chat_id = update.effective_chat.id
     update.message.reply_text("start")
@@ -15,22 +26,15 @@ def start(update, context):
 def add(update, context):
     chat_id = update.effective_chat.id
     update.message.reply_text("add")
-    print("adddaaa".format(chat_id))
-
+    extract_number(update.message.text)
+    
 def end(update, context):
     chat_id = update.effective_chat.id
     chat_ids.remove(chat_id)
 
 
-
-def logUsingPorchiddei(error):
-    porcone = Bestemmie()
-    print(error+" "+porcone.random())
-
-
 if __name__ == '__main__':
     bot = telegram.Bot(token)
-    start
     print(bot.get_me())
 
     updater = Updater(token)
@@ -39,16 +43,3 @@ if __name__ == '__main__':
     updater.dispatcher.add_handler(CommandHandler("add", add))
     updater.start_polling()
     updater.idle()
-
-    try:
-        connection = psycopg2.connect(user=os.environ['USER_DB'],
-                                      password=os.environ['PASS_DB'],
-                                      host=os.environ['HOST_DB'],
-                                      port=os.environ['PORT_DB'],
-                                      database=os.environ['NAME_DB'])
-        cursor = connection.cursor()
-        postgres_insert_query = "INSERT INTO t_sushi (telegram_user,name,qty,description) VALUES ('"+telegramUser+"','"+dishNum+"',"+dishCount+",'"+dishDescr+"')"
-        cursor.execute(postgres_insert_query)
-        connection.commit()
-    except:
-        logUsingPorchiddei("errore contattando il db")
