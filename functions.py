@@ -2,7 +2,7 @@ import telegram
 from telegram.ext import Updater, CommandHandler
 from bestemmie import Bestemmie
 import database
-from array import *
+import main
 
 chat_ids = set()
 
@@ -61,11 +61,13 @@ def allDishes(update, context):
 def removeDish(update, context):
     user = update.message.from_user
     database.deleteDish(extract_number(update.message.text, user["username"]))
+    update.message.reply_text("Piatto " + params[2] + " rimosso")
 
 
 def removeAllDishes(update, context):
     user = update.message.from_user
     database.deleteTranchee(user["username"])
+    update.message.reply_text("Piatti rimossi")
 
 def removeAll(update, context):
     user = update.message.from_user
@@ -73,13 +75,18 @@ def removeAll(update, context):
 
     if username.lower() in ("edoshin98", "stegon998"):
         database.removeAll()
+        update.message.reply_text("Tabella svuotata")
+
     else:
-        update.message.reply_text("Eh volevih!")
+        photo = open("./volevi.gif")
+        bot = telegram.Bot(main.token)
+        bot.send_animation(update.effective_chat.id, photo)
 
 
 def updateQty(update, context):
     user = update.message.from_user
     database.updateQty(extract_number(update.message.text, user["username"]))
+    update.message.reply_text("Quantità del piatto: " + params[2] + " portata a: " + params[3])
 
 def getHelp(update, context):
     messagge = "/add o /a Comando per aggiungere un piatto (formato OBBLIGATORIO: numero del piatto quantita evventuale descrizione) Mirko ti tengo d'occhio\n\n"+ \

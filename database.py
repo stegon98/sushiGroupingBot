@@ -85,7 +85,7 @@ def getAllDishes():
         postgreSQL_select_Query = "SELECT name, SUM(qty), MAX(description) FROM t_sushi GROUP BY name "
         cursor.execute(postgreSQL_select_Query)
         orders = cursor.fetchall()
-        orderArray = []
+        orderArray=""
 
         for i in range(len(orders)):
             orderArray.append(f"{orders[i][0]} {orders[i][1]} {orders[i][2]}\n")
@@ -116,7 +116,7 @@ def myDishes(user):
         postgreSQL_select_Query = "SELECT name, qty, description FROM t_sushi WHERE telegram_user = '" + user + "'"
         cursor.execute(postgreSQL_select_Query)
         orders = cursor.fetchall()
-        orderArray = []
+        orderArray = ""
 
         for i in range(len(orders)):
             orderArray.append(f"{orders[i][0]} {orders[i][1]} {orders[i][2]}\n")
