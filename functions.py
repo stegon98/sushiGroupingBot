@@ -2,17 +2,15 @@ import telegram
 from telegram.ext import Updater, CommandHandler
 from bestemmie import Bestemmie
 import database
-import json
+from array import *
 
 chat_ids = set()
 
 def extract_number(text, username):
     paramList = []
+    paramList.append(username)
     for i in range(len(text.split())):
-        if (i == 0):
-            paramList.append(username)
-        elif (i > 0 & text.split()[i].strip() != "/add"):
-            paramList.append(text.split()[i].strip())
+        paramList.append(text.split()[i].strip())
 
     database.insertData(paramList)
 
