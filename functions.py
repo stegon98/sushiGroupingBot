@@ -81,34 +81,12 @@ def updateQty(update, context):
     database.updateQty(paramlist)
 
 def getHelp(update, context):
-    text = {{"name": "", "description": ""}}
-    functions = [
-        "/add",
-        "/myDishes"
-        "/allDishes",
-        "/remove",
-        "/removeAll",
-        "/truncate",
-        "/updateQuantity"
-    ]
+    messagge = "/add Comando per aggiungere un piatto (formato OBBLIGATORIO: numero del piatto quantita evventuale descrizione) Mirko ti tengo d'occhio\n\n"+ \
+               "/myDishes Comando per vedere i piatti che ho ordinato\n\n"+\
+               "/allDishes Comando per vedere tutti i piatti ordinati da tutti\n\n"+\
+               "/remove Comando per togliere un piatto da inserire numero del piatto dopo il comando... EX /remove 11b\n\n"+\
+               "/removeAll Comando per rimuovere l'intera lista di piatti ordinati\n\n"+\
+               "/truncate Comando per i veri pro (io e ste) NON USARE\n\n"+\
+               "/updateQuantity Comando per modificare la quantita dell'ordine. Da passare nome piatto e nuova quantita... EX /updateQuantity 11b 10\n"
 
-    descriptions = [
-        "Comando per aggiungere un piatto (formato OBBLIGATORIO: numero del piatto quantita evventuale descrizione) " +
-        "\nMirko ti tengo d'occhio",
-        "Comando per vedere i piatti che ho ordinato",
-        "Comando per vedere tutti i piatti ordinati da tutti",
-        "Comando per togliere un piatto da inserire numero del piatto dopo il comando... EX: /remove 11b",
-        "Comando per rimuovere l'intera lista di piatti ordinati",
-        "Comando per i veri pro (io e ste) NON USARE",
-        "Comando per modificare la quantità dell'ordine. Da passare nome piatto e nuova quantità... " +
-        "\nEX: /updateQuantity 11b 10"
-
-    ]
-
-    for function in functions:
-        text["name"] = function
-
-    for description in descriptions:
-        text["description"] = description
-
-    update.message.reply_text(text)
+    update.message.reply_text(messagge)
