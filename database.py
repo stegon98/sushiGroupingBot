@@ -22,11 +22,8 @@ def queryBuilder(query, functionName):
 
     except (Exception, psycopg2.Error) as error:
         functions.logUsingPorchiddei("si è spaccato il db!" + error +" Tutta colpa di "+functionName)
-    with psycopg2.connect(user=os.environ['USER_DB'],
-                          password=os.environ['PASS_DB'],
-                          host=os.environ['HOST_DB'],
-                          port=os.environ['PORT_DB'],
-                          database=os.environ['NAME_DB']):
+
+    finally:
         if connection:
             cursor.close()
             connection.close()
@@ -40,7 +37,6 @@ def insertData(paramList):
                               ""), "SELECT", ""), "UPDATE", ""), "GRANT", "")
 
     query = "INSERT INTO t_sushi (telegram_user,name,qty,description) VALUES ('" + paramList[0] + "','" + paramList[1] + "'," + paramList[2] + ",'" + (" " if len(paramList) < 4 else paramList[3] + "')")
-
     queryBuilder(query, "insertData")
 
 
@@ -51,7 +47,6 @@ def deleteDish(paramList):
                               ""), "SELECT", ""), "UPDATE", ""), "GRANT", "")
 
     query = "DELETE t_sushi WHERE telegram_user='" + paramList[2] + "' AND name='" + paramList[1] + "'"
-
     queryBuilder(query, "deleteDish")
 
 
@@ -88,7 +83,6 @@ def getAllDishes():
         cursor = connection.cursor()
         postgreSQL_select_Query = "SELECT name, SUM(qty), MAX(description) FROM t_sushi GROUP BY name, qty "
         cursor.execute(postgreSQL_select_Query)
-        print("Selecting rows from mobile table using cursor.fetchall")
         orders = cursor.fetchall()
         orderArray = []
 
@@ -99,16 +93,10 @@ def getAllDishes():
     except (Exception, psycopg2.Error) as error:
         functions.logUsingPorchiddei("si è spaccato il db!" + error + " Tutta colpa della getAll")
 
-    with psycopg2.connect(user=os.environ['USER_DB'],
-                          password=os.environ['PASS_DB'],
-                          host=os.environ['HOST_DB'],
-                          port=os.environ['PORT_DB'],
-                          database=os.environ['NAME_DB']):
+    finally:
         if connection:
             cursor.close()
-
             connection.close()
-
             print("PostgreSQL connection is closed")
 
 def myDishes(user):
@@ -125,7 +113,6 @@ def myDishes(user):
         cursor = connection.cursor()
         postgreSQL_select_Query = "SELECT name, qty, MAX(description) FROM t_sushi WHERE telegram_user = '" + user + "'"
         cursor.execute(postgreSQL_select_Query)
-        print("Selecting rows from mobile table using cursor.fetchall")
         orders = cursor.fetchall()
         orderArray = []
 
@@ -136,14 +123,8 @@ def myDishes(user):
     except (Exception, psycopg2.Error) as error:
         functions.logUsingPorchiddei("si è spaccato il db!" + error + " Tutta colpa della getAll")
 
-    with psycopg2.connect(user=os.environ['USER_DB'],
-                          password=os.environ['PASS_DB'],
-                          host=os.environ['HOST_DB'],
-                          port=os.environ['PORT_DB'],
-                          database=os.environ['NAME_DB']):
+    finally:
         if connection:
             cursor.close()
-
             connection.close()
-
             print("PostgreSQL connection is closed")
