@@ -21,7 +21,7 @@ def queryBuilder(query, functionName):
         connection.commit()
 
     except (Exception, psycopg2.Error) as error:
-        functions.logUsingPorchiddei("si è spaccato il db!" + error +" Tutta colpa di "+functionName)
+        functions.logUsingPorchiddei("si è spaccato il db!" + str(error) +" Tutta colpa di "+str(functionName))
 
     finally:
         if connection:
@@ -35,18 +35,19 @@ def insertData(paramList):
         paramList[id] = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
             replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList[id], "DROP", ""), "DELETE", ""), "TRUNCATE",
                               ""), "SELECT", ""), "UPDATE", ""), "GRANT", "")
-
-    query = "INSERT INTO t_sushi (telegram_user,name,qty,description) VALUES ('" + paramList[0] + "','" + paramList[1] + "'," + paramList[2] + ",'" + (" " if len(paramList) < 4 else paramList[3] + "')")
+    if len(paramList) == 5 and paramList[4]=="bb":
+        paramList[4]= functions.estraiUnPorchiddeo()
+    query = "INSERT INTO t_sushi (telegram_user,name,qty,description) VALUES ('" + paramList[0] + "','" + paramList[2] + "'," + paramList[3] + ",'" + (" " if len(paramList) < 5 else paramList[4] + "')")
     queryBuilder(query, "insertData")
 
 
 def deleteDish(paramList):
-    for id in paramList:
+    for id in range(len(paramList)):
         paramList[id] = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
             replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList[id], "DROP", ""), "DELETE", ""), "TRUNCATE",
                               ""), "SELECT", ""), "UPDATE", ""), "GRANT", "")
 
-    query = "DELETE t_sushi WHERE telegram_user='" + paramList[2] + "' AND name='" + paramList[1] + "'"
+    query = "DELETE from t_sushi WHERE telegram_user='" + paramList[0] + "' AND name='" + paramList[2] + "'"
     queryBuilder(query, "deleteDish")
 
 
@@ -55,21 +56,21 @@ def deleteTranchee(user):
         replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(user, "DROP", ""), "DELETE", ""), "TRUNCATE", ""),
         "SELECT", ""), "UPDATE", ""), "GRANT", "")
 
-    query = "DELETE t_sushi WHERE telegram_user='" + user + "'"
+    query = "DELETE from t_sushi WHERE telegram_user='" + user + "'"
     queryBuilder(query, "deleteTranchee")
 
 def updateQty(paramList):
-    for id in paramList:
+    for id in range(len(paramList)):
         paramList[id] = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
             replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList[id], "DROP", ""), "DELETE", ""), "TRUNCATE",
                               ""), "SELECT", ""), "UPDATE", ""), "GRANT", "")
 
-    query = "UPDATE t_sushi set qty=" + paramList[2] + " WHERE telegram_user='" + paramList[3] + "'" + "name='" + paramList[1] + "'"
+    query = "UPDATE t_sushi set qty=" + paramList[3] + " WHERE telegram_user='" + paramList[0] + "'" + " AND name='" + paramList[2] + "'"
     queryBuilder(query, "updateQty")
 
 def removeAll():
 
-    query = "DELETE t_sushi "
+    query = "DELETE from t_sushi "
     queryBuilder(query, "removeAll")
 
 def getAllDishes():
@@ -81,17 +82,18 @@ def getAllDishes():
                                       port=os.environ['PORT_DB'],
                                       database=os.environ['NAME_DB'])
         cursor = connection.cursor()
-        postgreSQL_select_Query = "SELECT name, SUM(qty), MAX(description) FROM t_sushi GROUP BY name, qty "
+        postgreSQL_select_Query = "SELECT name, SUM(qty), MAX(description) FROM t_sushi GROUP BY name "
         cursor.execute(postgreSQL_select_Query)
         orders = cursor.fetchall()
         orderArray = []
 
-        for order in orders:
-            orderArray.append(order)
-            orderArray.append("\n")
+        for i in range(len(orders)):
+            orderArray.append(f"{orders[i][0]} {orders[i][1]} {orders[i][2]}\n")
+
+        return orderArray
 
     except (Exception, psycopg2.Error) as error:
-        functions.logUsingPorchiddei("si è spaccato il db!" + error + " Tutta colpa della getAll")
+        functions.logUsingPorchiddei("si è spaccato il db!" + str(error) + " Tutta colpa della getAll")
 
     finally:
         if connection:
@@ -111,17 +113,18 @@ def myDishes(user):
                                       port=os.environ['PORT_DB'],
                                       database=os.environ['NAME_DB'])
         cursor = connection.cursor()
-        postgreSQL_select_Query = "SELECT name, qty, MAX(description) FROM t_sushi WHERE telegram_user = '" + user + "'"
+        postgreSQL_select_Query = "SELECT name, qty, description FROM t_sushi WHERE telegram_user = '" + user + "'"
         cursor.execute(postgreSQL_select_Query)
         orders = cursor.fetchall()
         orderArray = []
 
-        for order in orders:
-            orderArray.append(order)
-            orderArray.append("\n")
+        for i in range(len(orders)):
+            orderArray.append(f"{orders[i][0]} {orders[i][1]} {orders[i][2]}\n")
+
+        return orderArray
 
     except (Exception, psycopg2.Error) as error:
-        functions.logUsingPorchiddei("si è spaccato il db!" + error + " Tutta colpa della getAll")
+        functions.logUsingPorchiddei("si è spaccato il db!" + str(error) + " Tutta colpa della getAll")
 
     finally:
         if connection:
