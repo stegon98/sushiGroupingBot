@@ -78,7 +78,7 @@ def removeAll(update, context):
         update.message.reply_text("Tabella svuotata")
 
     else:
-        photo = open("./volevi.gif")
+        photo = open("./Images/volevi.gif",'rb')
         bot = telegram.Bot(main.token)
         bot.send_animation(update.effective_chat.id, photo)
 
