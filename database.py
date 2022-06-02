@@ -3,7 +3,7 @@ import os
 import main
 from bestemmie import Bestemmie
 import functions
-
+#provacommit
 
 
 def replaceIgnoreCase(text, textToReplace, repl):
@@ -43,7 +43,6 @@ def queryBuilder(query, functionName):
             connection.close()
             print("PostgreSQL connection is closed")
 
-
 def insertData(paramList):
     try:
         paramList = avoidSqlInjection(paramList)
@@ -57,7 +56,6 @@ def insertData(paramList):
         return 0
     except:
         return -1
-
 
 def deleteDish(paramList):
     try:
