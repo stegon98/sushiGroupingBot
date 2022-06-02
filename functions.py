@@ -39,7 +39,8 @@ def add(update, context):
     chat_id = update.effective_chat.id
     user = update.message.from_user
     update.message.reply_text("Sto aggiungendo tutto")
-    database.insertData(extract_number(update.message.text, user["username"]))
+    if(database.insertData(extract_number(update.message.text, user["username"]))!=0):
+        update.message.reply_text("Si è scassato " )
 
 def myDishes(update, context):
     # funzione che estrarra solo i piatti ordinati da un utente
@@ -60,22 +61,28 @@ def allDishes(update, context):
 
 def removeDish(update, context):
     user = update.message.from_user
-    database.deleteDish(extract_number(update.message.text, user["username"]))
-    update.message.reply_text("Piatto rimosso")
+    if(database.deleteDish(extract_number(update.message.text, user["username"]))!=0):
+        update.message.reply_text("Piatto rimosso")
+    else:
+        update.message.reply_text("Si è scassato")
 
 
 def removeAllDishes(update, context):
     user = update.message.from_user
-    database.deleteTranchee(user["username"])
-    update.message.reply_text("Piatti rimossi")
+    if(database.deleteTranchee(user["username"])==0):
+        update.message.reply_text("Piatti rimossi")
+    else:
+        update.message.reply_text("Si è scassato")
 
 def removeAll(update, context):
     user = update.message.from_user
     username = user["username"]
 
     if username.lower() in ("edoshin98", "stegon998"):
-        database.removeAll()
-        update.message.reply_text("Tabella svuotata")
+        if(database.removeAll()==0):
+            update.message.reply_text("Tabella svuotata")
+        else:
+            update.message.reply_text("Si è scassato")
 
     else:
         photo = open("./Images/volevi.gif",'rb')
@@ -85,8 +92,10 @@ def removeAll(update, context):
 
 def updateQty(update, context):
     user = update.message.from_user
-    database.updateQty(extract_number(update.message.text, user["username"]))
-    update.message.reply_text("Quantità del piatto modifcate")
+    if(database.updateQty(extract_number(update.message.text, user["username"]))==0):
+        update.message.reply_text("Quantità del piatto modifcate")
+    else:
+        update.message.reply_text("Si è scassato")
 
 def getHelp(update, context):
     messagge = "/add o /a Comando per aggiungere un piatto (formato OBBLIGATORIO: numero del piatto quantita evventuale descrizione) Mirko ti tengo d'occhio\n\n"+ \

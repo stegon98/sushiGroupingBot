@@ -31,47 +31,69 @@ def queryBuilder(query, functionName):
 
 
 def insertData(paramList):
-    for id in range(len(paramList)):
-        paramList[id] = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
-            replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList[id], "DROP", ""), "DELETE", ""), "TRUNCATE",
-                              ""), "SELECT", ""), "UPDATE", ""), "GRANT", "")
-    if len(paramList) == 5 and paramList[4]=="bb":
-        paramList[4]= (functions.estraiUnPorchiddeo()).replace("'"," ")
-    query = "INSERT INTO t_sushi (telegram_user,name,qty,description) VALUES ('" + paramList[0] + "','" + paramList[2] + "'," + paramList[3] + ",'" + (" " if len(paramList) < 5 else paramList[4] + "')")
-    queryBuilder(query, "insertData")
+    try:
+        for id in range(len(paramList)):
+            paramList[id] = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
+                replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList[id], "DROP", ""), "DELETE", ""), "TRUNCATE",
+                                  ""), "SELECT", ""), "UPDATE", ""), "GRANT", "")
+        if(paramList[3].isalpha() and len(paramList)<5):
+            paramList.append(paramList[3])
+            paramList[3]="1"
+        if len(paramList) == 5 and paramList[4]=="bb":
+            paramList[4]= (functions.estraiUnPorchiddeo()).replace("'"," ")
+        query = "INSERT INTO t_sushi (telegram_user,name,qty,description) VALUES ('" + paramList[0] + "','" + paramList[2] + "'," + paramList[3] + ",'" + (" " if len(paramList) < 5 else paramList[4] + "')")
+        queryBuilder(query, "insertData")
+        return 0
+    except:
+        return -1
 
 
 def deleteDish(paramList):
-    for id in range(len(paramList)):
-        paramList[id] = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
-            replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList[id], "DROP", ""), "DELETE", ""), "TRUNCATE",
-                              ""), "SELECT", ""), "UPDATE", ""), "GRANT", "")
+    try:
+        for id in range(len(paramList)):
+            paramList[id] = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
+                replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList[id], "DROP", ""), "DELETE", ""), "TRUNCATE",
+                                  ""), "SELECT", ""), "UPDATE", ""), "GRANT", "")
 
-    query = "DELETE from t_sushi WHERE telegram_user='" + paramList[0] + "' AND name='" + paramList[2] + "'"
-    queryBuilder(query, "deleteDish")
+        query = "DELETE from t_sushi WHERE telegram_user='" + paramList[0] + "' AND name='" + paramList[2] + "'"
+        queryBuilder(query, "deleteDish")
+        return 0
+    except:
+        return -1
 
 
 def deleteTranchee(user):
-    user = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
-        replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(user, "DROP", ""), "DELETE", ""), "TRUNCATE", ""),
-        "SELECT", ""), "UPDATE", ""), "GRANT", "")
+    try:
+        user = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
+            replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(user, "DROP", ""), "DELETE", ""), "TRUNCATE", ""),
+            "SELECT", ""), "UPDATE", ""), "GRANT", "")
 
-    query = "DELETE from t_sushi WHERE telegram_user='" + user + "'"
-    queryBuilder(query, "deleteTranchee")
+        query = "DELETE from t_sushi WHERE telegram_user='" + user + "'"
+        queryBuilder(query, "deleteTranchee")
+        return 0
+    except:
+        return -1
 
 def updateQty(paramList):
-    for id in range(len(paramList)):
-        paramList[id] = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
-            replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList[id], "DROP", ""), "DELETE", ""), "TRUNCATE",
-                              ""), "SELECT", ""), "UPDATE", ""), "GRANT", "")
+    try:
+        for id in range(len(paramList)):
+            paramList[id] = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
+                replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList[id], "DROP", ""), "DELETE", ""), "TRUNCATE",
+                                  ""), "SELECT", ""), "UPDATE", ""), "GRANT", "")
 
-    query = "UPDATE t_sushi set qty=" + paramList[3] + " WHERE telegram_user='" + paramList[0] + "'" + " AND name='" + paramList[2] + "'"
-    queryBuilder(query, "updateQty")
+        query = "UPDATE t_sushi set qty=" + paramList[3] + " WHERE telegram_user='" + paramList[0] + "'" + " AND name='" + paramList[2] + "'"
+        queryBuilder(query, "updateQty")
+        return 0
+    except:
+        return -1
 
 def removeAll():
-
-    query = "DELETE from t_sushi "
-    queryBuilder(query, "removeAll")
+    try:
+        query = "DELETE from t_sushi "
+        queryBuilder(query, "removeAll")
+        return 0
+    except:
+        return -1
 
 def getAllDishes():
 
@@ -102,11 +124,13 @@ def getAllDishes():
             print("PostgreSQL connection is closed")
 
 def myDishes(user):
-    user = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
-        replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(user, "DROP", ""), "DELETE", ""), "TRUNCATE", ""),
-        "SELECT", ""), "UPDATE", ""), "GRANT", "")
 
     try:
+        user = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
+            replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(user, "DROP", ""), "DELETE", ""), "TRUNCATE", ""),
+            "SELECT", ""), "UPDATE", ""), "GRANT", "")
+
+
         connection = psycopg2.connect(user=os.environ['USER_DB'],
                                       password=os.environ['PASS_DB'],
                                       host=os.environ['HOST_DB'],
