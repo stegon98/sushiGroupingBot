@@ -52,7 +52,7 @@ def insertData(paramList):
             paramList[3]="1"
         if len(paramList) == 5 and paramList[4]=="bb":
             paramList[4]= (functions.estraiUnPorchiddeo()).replace("'"," ")
-        query = "INSERT INTO t_sushi (telegram_user,name,qty,description) VALUES ('" + paramList[0] + "','" + paramList[2] + "'," + paramList[3] + ",'" + ("') " if len(paramList) < 5 else paramList[4] + "')")
+        query = "INSERT INTO t_sushi (telegram_user,name,qty,description) VALUES  ('" + paramList[0] + "','" + paramList[2] + "'," + paramList[3] + ",'" + ("') " if len(paramList) < 5 else paramList[4] + "')")
         queryBuilder(query, "insertData")
         return 0
     except:
