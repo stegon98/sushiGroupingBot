@@ -24,5 +24,7 @@ if __name__ == '__main__':
     updater.dispatcher.add_handler(CommandHandler("updateQuantity", functions.updateQty))
     updater.dispatcher.add_handler(CommandHandler("uq", functions.updateQty))
     updater.dispatcher.add_handler(CommandHandler("help", functions.getHelp))
+    updater.dispatcher.add_handler(CommandHandler("wo", functions.whoOrdered))
+    updater.dispatcher.add_handler(CommandHandler("whoOrdered", functions.whoOrdered))
     updater.start_polling()
     updater.idle()

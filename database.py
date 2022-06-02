@@ -5,8 +5,22 @@ from bestemmie import Bestemmie
 import functions
 
 
+
 def replaceIgnoreCase(text, textToReplace, repl):
     return text.lower().replace(textToReplace.lower(), repl.lower())
+
+def avoidSqlInjection(paramList,a):
+    paramList=replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
+        replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList, "DROP", ""), "DELETE", ""), "TRUNCATE",
+                          ""), "SELECT", ""), "UPDATE", ""), "CREATE", ""), "ALTER", ""), "LIKE", ""), "=", ""), "AAAAAAAAAAAAAAAAAAAAA", "")
+    return paramList
+
+def avoidSqlInjection(paramList):
+    for id in range(len(paramList)):
+        paramList[id]=replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
+            replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList[id], "DROP", ""), "DELETE", ""), "TRUNCATE",
+                              ""), "SELECT", ""), "UPDATE", ""), "CREATE", ""), "ALTER", ""), "LIKE", ""), "=", ""), "AAAAAAAAAAAAAAAAAAAAA", "")
+    return paramList
 
 def queryBuilder(query, functionName):
     try:
@@ -32,16 +46,13 @@ def queryBuilder(query, functionName):
 
 def insertData(paramList):
     try:
-        for id in range(len(paramList)):
-            paramList[id] = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
-                replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList[id], "DROP", ""), "DELETE", ""), "TRUNCATE",
-                                  ""), "SELECT", ""), "UPDATE", ""), "GRANT", "")
+        paramList = avoidSqlInjection(paramList)
         if(paramList[3].isalpha() and len(paramList)<5):
             paramList.append(paramList[3])
             paramList[3]="1"
         if len(paramList) == 5 and paramList[4]=="bb":
             paramList[4]= (functions.estraiUnPorchiddeo()).replace("'"," ")
-        query = "INSERT INTO t_sushi (telegram_user,name,qty,description) VALUES ('" + paramList[0] + "','" + paramList[2] + "'," + paramList[3] + ",'" + (" " if len(paramList) < 5 else paramList[4] + "')")
+        query = "INSERT INTO t_sushi (telegram_user,name,qty,description) VALUES ('" + paramList[0] + "','" + paramList[2] + "'," + paramList[3] + ",'" + ("') " if len(paramList) < 5 else paramList[4] + "')")
         queryBuilder(query, "insertData")
         return 0
     except:
@@ -50,10 +61,7 @@ def insertData(paramList):
 
 def deleteDish(paramList):
     try:
-        for id in range(len(paramList)):
-            paramList[id] = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
-                replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList[id], "DROP", ""), "DELETE", ""), "TRUNCATE",
-                                  ""), "SELECT", ""), "UPDATE", ""), "GRANT", "")
+        paramList=avoidSqlInjection(paramList)
 
         query = "DELETE from t_sushi WHERE telegram_user='" + paramList[0] + "' AND name='" + paramList[2] + "'"
         queryBuilder(query, "deleteDish")
@@ -64,9 +72,7 @@ def deleteDish(paramList):
 
 def deleteTranchee(user):
     try:
-        user = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
-            replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(user, "DROP", ""), "DELETE", ""), "TRUNCATE", ""),
-            "SELECT", ""), "UPDATE", ""), "GRANT", "")
+        user=avoidSqlInjection(user, 1)
 
         query = "DELETE from t_sushi WHERE telegram_user='" + user + "'"
         queryBuilder(query, "deleteTranchee")
@@ -76,10 +82,7 @@ def deleteTranchee(user):
 
 def updateQty(paramList):
     try:
-        for id in range(len(paramList)):
-            paramList[id] = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
-                replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList[id], "DROP", ""), "DELETE", ""), "TRUNCATE",
-                                  ""), "SELECT", ""), "UPDATE", ""), "GRANT", "")
+        paramList = avoidSqlInjection(paramList)
 
         query = "UPDATE t_sushi set qty=" + paramList[3] + " WHERE telegram_user='" + paramList[0] + "'" + " AND name='" + paramList[2] + "'"
         queryBuilder(query, "updateQty")
@@ -126,9 +129,7 @@ def getAllDishes():
 def myDishes(user):
 
     try:
-        user = replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
-            replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(user, "DROP", ""), "DELETE", ""), "TRUNCATE", ""),
-            "SELECT", ""), "UPDATE", ""), "GRANT", "")
+        user = avoidSqlInjection(user, 1)
 
 
         connection = psycopg2.connect(user=os.environ['USER_DB'],
@@ -138,6 +139,36 @@ def myDishes(user):
                                       database=os.environ['NAME_DB'])
         cursor = connection.cursor()
         postgreSQL_select_Query = "SELECT name, qty, description FROM t_sushi WHERE telegram_user = '" + user + "' ORDER BY name"
+        cursor.execute(postgreSQL_select_Query)
+        orders = cursor.fetchall()
+        orderArray = []
+
+        for i in range(len(orders)):
+            orderArray.append(f"{orders[i][0]} {orders[i][1]} {orders[i][2]}\n")
+
+        return orderArray
+
+    except (Exception, psycopg2.Error) as error:
+        functions.logUsingPorchiddei("si è spaccato il db!" + str(error) + " Tutta colpa della getAll")
+
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
+def whoOrdered(name):
+
+    try:
+        name[2]=avoidSqlInjection(name[2], 1)
+
+        connection = psycopg2.connect(user=os.environ['USER_DB'],
+                                      password=os.environ['PASS_DB'],
+                                      host=os.environ['HOST_DB'],
+                                      port=os.environ['PORT_DB'],
+                                      database=os.environ['NAME_DB'])
+        cursor = connection.cursor()
+        postgreSQL_select_Query = "SELECT telegram_user, qty, description FROM t_sushi WHERE name = '" + name[2] + "' ORDER BY telegram_user"
         cursor.execute(postgreSQL_select_Query)
         orders = cursor.fetchall()
         orderArray = []

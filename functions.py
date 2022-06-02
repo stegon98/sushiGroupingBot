@@ -52,6 +52,16 @@ def myDishes(update, context):
 
     update.message.reply_text("I tuoi piatti " + user["username"] + " sono i seguenti: \n" + message)
 
+def whoOrdered(update, context):
+    # funzione che estrarra solo i piatti ordinati da un utente
+    user = update.message.from_user
+    dishes = database.whoOrdered(extract_number(update.message.text, user["username"]))
+    message=""
+    for dish in dishes:
+        message=message+dish
+
+    update.message.reply_text("il piatto è stato ordinato da: \n" + message)
+
 def allDishes(update, context):
     dishes = database.getAllDishes()
     message=""
@@ -85,7 +95,7 @@ def removeAll(update, context):
             update.message.reply_text("Si è scassato")
 
     else:
-        photo = open("./Images/volevi.gif",'rb')
+        photo = open("/home/sushiGroupingBot/Images/volevi.gif",'rb')
         bot = telegram.Bot(main.token)
         bot.send_animation(update.effective_chat.id, photo)
 
@@ -104,6 +114,6 @@ def getHelp(update, context):
                "/remove o /rm Comando per togliere un piatto da inserire numero del piatto dopo il comando... EX /remove 11b\n\n"+\
                "/removeAll Comando per rimuovere l'intera lista di piatti ordinati\n\n"+\
                "/truncate Comando per i veri pro (io e ste) NON USARE\n\n"+\
-               "/updateQuantity /uq Comando per modificare la quantita dell'ordine. Da passare nome piatto e nuova quantita... EX /updateQuantity 11b 10\n"
-
+               "/updateQuantity /uq Comando per modificare la quantita dell'ordine. Da passare nome piatto e nuova quantita... EX /updateQuantity 11b 10\n\n"+\
+               "/whoOrdered /wo Comando per visualizzare chi ha ordinato il piatto EX /wo 11b \n\n"
     update.message.reply_text(messagge)
