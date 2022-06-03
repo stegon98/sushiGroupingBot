@@ -9,7 +9,7 @@ import functions
 def replaceIgnoreCase(text, textToReplace, repl):
     return text.lower().replace(textToReplace.lower(), repl.lower())
 
-def avoidSqlInjection(paramList,a):
+def avoidSqlInjectionSingleParam(paramList):
     paramList=replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(
         replaceIgnoreCase(replaceIgnoreCase(replaceIgnoreCase(paramList, "DROP", ""), "DELETE", ""), "TRUNCATE",
                           ""), "SELECT", ""), "UPDATE", ""), "CREATE", ""), "ALTER", ""), "LIKE", ""), "=", ""), "AAAAAAAAAAAAAAAAAAAAA", "")
@@ -70,7 +70,7 @@ def deleteDish(paramList):
 
 def deleteTranchee(user):
     try:
-        user=avoidSqlInjection(user, 1)
+        user=avoidSqlInjectionSingleParam(user, 1)
 
         query = "DELETE from t_sushi WHERE telegram_user='" + user + "'"
         queryBuilder(query, "deleteTranchee")
@@ -127,7 +127,7 @@ def getAllDishes():
 def myDishes(user):
 
     try:
-        user = avoidSqlInjection(user, 1)
+        user = avoidSqlInjectionSingleParam(user)
 
 
         connection = psycopg2.connect(user=os.environ['USER_DB'],
@@ -158,7 +158,7 @@ def myDishes(user):
 def whoOrdered(name):
 
     try:
-        name[2]=avoidSqlInjection(name[2], 1)
+        name[2]=avoidSqlInjectionSingleParam(name[2])
 
         connection = psycopg2.connect(user=os.environ['USER_DB'],
                                       password=os.environ['PASS_DB'],
